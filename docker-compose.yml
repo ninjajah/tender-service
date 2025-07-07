@@ -1,0 +1,39 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: tender-app
+        restart: unless-stopped
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+        ports:
+            - "8000:8000"
+        depends_on:
+            - mysql
+        networks:
+            - tender-network
+
+    mysql:
+        image: mysql:8.0
+        container_name: tender-mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: tender_service
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_PASSWORD: secret
+            MYSQL_USER: tender_user
+        volumes:
+            - mysql-data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        networks:
+            - tender-network
+
+volumes:
+    mysql-data:
+
+networks:
+    tender-network:
+        driver: bridge
